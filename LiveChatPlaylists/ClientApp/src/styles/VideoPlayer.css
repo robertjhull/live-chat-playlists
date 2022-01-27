@@ -1,0 +1,46 @@
+﻿.app {
+    margin: 5rem auto;
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-weight: 300;
+    text-align: center;
+}
+
+.section {
+    display: inline-block;
+    max-width: 1200px;
+    margin: 20px auto;
+    text-align: center;
+    vertical-align: top;
+}
+
+.tv-wrapper {
+    position: relative;
+    min-height: 675px;
+    width: 1200px;
+    background-size:cover;
+    background-repeat:no-repeat;
+    background-image: url(https://img.search.brave.com/XgS9uKl5p44T9EM-jexqgZ61ZhQKZ_4jBMj0gAggQ00/rs:fit:1200:1080:1/g:ce/aHR0cHM6Ly9pLnBp/bmltZy5jb20vb3Jp/Z2luYWxzLzlhLzQy/LzkzLzlhNDI5MzQ4/YmVjNzcxYmJjYWNk/YTgxMDNlNjdhOTA0/LnBuZw)
+}
+
+.player-wrapper {
+    width: 800px;
+    height: 480px;
+    pointer-events: none;
+    padding: 90px 106px;
+}
+
+progress {
+    width: 800px;
+}
+
+.react-player {
+    background: rgba(0, 0, 0, .1);
+}
+
+.faded {
+    color: rgba(0, 0, 0, .5);
+}
+
+.footer {
+    margin: 5rem;
+}
