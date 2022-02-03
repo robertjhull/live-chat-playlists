@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using RandomColorGenerator;
+using System.Drawing;
 
 namespace LiveChatPlaylists
 {
@@ -9,5 +7,11 @@ namespace LiveChatPlaylists
     {
         public string User { get; set; }
         public string Room { get; set; }
+        public Color Color { get; set; }
+
+        public UserConnection()
+        {
+            this.Color = RandomColor.GetColor(ColorScheme.Random, Luminosity.Bright);
+        }
     }
 }

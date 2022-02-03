@@ -1,10 +1,10 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using System.Collections.Generic;
 
 namespace LiveChatPlaylists
 {
@@ -20,7 +20,10 @@ namespace LiveChatPlaylists
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddSignalR();
+            services.AddSignalR(o =>
+            {
+                o.EnableDetailedErrors = true;
+            });
 
             services.AddCors(options =>
             {
@@ -34,6 +37,8 @@ namespace LiveChatPlaylists
             });
 
             services.AddControllersWithViews();
+
+            services.AddSingleton<IDictionary<string, UserConnection>>(opts => new Dictionary<string, UserConnection>());
 
             // In production, the React files will be served from this directory
             services.AddSpaStaticFiles(configuration =>
@@ -60,13 +65,16 @@ namespace LiveChatPlaylists
             app.UseStaticFiles();
             app.UseSpaStaticFiles();
 
+            app.UseCors();
+
             app.UseRouting();
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapControllerRoute(
-                    name: "default",
-                    pattern: "{controller}/{action=Index}/{id?}");
+                endpoints.MapHub<Hubs.ChatHub>("/chat");
+                // endpoints.MapControllerRoute(
+                   // name: "default",
+                   // pattern: "{controller}/{action=Index}/{id?}");
             });
 
             app.UseSpa(spa =>
