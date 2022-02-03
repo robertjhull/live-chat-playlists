@@ -1,9 +1,14 @@
+$bg-primary: #171717;
+$bg-secondary: #393E46;
+
+$button-hover: #606875;
+
 body {
     margin-right: 10px;
     margin-left: 10px;
     font-size: 14px;
     line-height: 1.4;
-    background: #171717;
+    background: $bg-primary;
     color: #fff;
 }
 
@@ -56,14 +61,14 @@ th {
 textarea {
     width: 200px;
     padding: 5px;
-    border: 1px solid #eee;
+    border: 1px solid $bg-secondary;
     border-radius: 3px;
     outline: 0;
 }
 
 textarea:focus {
-    border-color: #eee;
-    box-shadow: 0 0 5px #eee;
+    border-color: $button-hover;
+    box-shadow: 0 0 5px $button-hover;
 }
 
 textarea {
@@ -78,17 +83,41 @@ button {
     border: 0;
     border-radius: 3px;
     outline: 0;
-    background-color: #eee;
+    color: #fff;
+    background-color: $bg-secondary;
 }
 
 button:focus {
-    background: #eee;
+    background: $button-hover;
 }
 
 button:hover {
-    background: #eee;
+    background: $button-hover;
 }
 
 button:active {
-    background: #eee;
+    background: $button-hover;
+}
+
+.chat-container {
+    height: 480px;
+    background: $bg-secondary;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.message-container {
+    padding:  5px 10px;
+    text-align: right;
+}
+
+.message-input {
+    border: 1px solid white;
+    width: 100%;
+}
+
+.new-message {
+    margin-bottom: 10px;
 }

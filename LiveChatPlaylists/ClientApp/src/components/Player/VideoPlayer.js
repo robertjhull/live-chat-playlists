@@ -1,11 +1,8 @@
 import React, { Component } from 'react'
 
-import '../styles/normalize.css'
-import '../styles/custom.css'
-import '../styles/range.scss'
-import '../styles/VideoPlayer.css'
+import '../../styles/range.scss'
+import '../../styles/VideoPlayer.css'
 
-import { version } from '../../package.json'
 import ReactPlayer from 'react-player/youtube'
 import Duration from './Duration'
 
@@ -33,7 +30,7 @@ export default class VideoPlayer extends Component {
         duration: 0,
         playbackRate: 1.0,
         loop: false,
-        showState: true
+        showState: false
     }
 
     load = url => {
@@ -143,45 +140,45 @@ export default class VideoPlayer extends Component {
 
     render() {
         const { queueIdx, url, playing, controls, light, volume, muted, loop, played, loaded, duration, playbackRate, pip, showState } = this.state
-        const SEPARATOR = ' · '
+        const SEPARATOR = ' ï¿½ '
 
         return (
-            <div className='app'>
+            <div className='vplayer'>
                 <section className='section'>
-                    <div className="tv-wrapper">
-                        <div className='player-wrapper'>
-                            <ReactPlayer
-                                ref={this.ref}
-                                className='react-player'
-                                width='800px'
-                                height='480px'
-                                url={url}
-                                pip={pip}
-                                playing={playing}
-                                controls={controls}
-                                light={light}
-                                loop={loop}
-                                playbackRate={playbackRate}
-                                volume={volume}
-                                muted={muted}
-                                onReady={() => console.log('onReady')}
-                                onStart={() => console.log('onStart')}
-                                onPlay={this.handlePlay}
-                                onEnablePIP={this.handleEnablePIP}
-                                onDisablePIP={this.handleDisablePIP}
-                                onPause={this.handlePause}
-                                onBuffer={() => console.log('onBuffer')}
-                                onPlaybackRateChange={this.handleOnPlaybackRateChange}
-                                onSeek={e => console.log('onSeek', e)}
-                                onEnded={this.handleEnded}
-                                onError={e => console.log('onError', e)}
-                                onProgress={this.handleProgress}
-                                onDuration={this.handleDuration}
-                            />
-                            <progress max={1} value={played} />
-                        </div>
+                    <div className='player-wrapper'>
+                        <ReactPlayer
+                            ref={this.ref}
+                            className='react-player'
+                            width='800px'
+                            height='480px'
+                            url={url}
+                            pip={pip}
+                            playing={playing}
+                            controls={controls}
+                            light={light}
+                            loop={loop}
+                            playbackRate={playbackRate}
+                            volume={volume}
+                            muted={muted}
+                            onReady={() => console.log('onReady')}
+                            onStart={() => console.log('onStart')}
+                            onPlay={this.handlePlay}
+                            onEnablePIP={this.handleEnablePIP}
+                            onDisablePIP={this.handleDisablePIP}
+                            onPause={this.handlePause}
+                            onBuffer={() => console.log('onBuffer')}
+                            onPlaybackRateChange={this.handleOnPlaybackRateChange}
+                            onSeek={e => console.log('onSeek', e)}
+                            onEnded={this.handleEnded}
+                            onError={e => console.log('onError', e)}
+                            onProgress={this.handleProgress}
+                            onDuration={this.handleDuration}
+                        />
+                        <progress max={1} value={played} />
                     </div>
-                    <table>
+                </section>
+                <section>
+                <table>
                         <tbody>
                             <tr>
                                 <th>Controls</th>
@@ -233,8 +230,6 @@ export default class VideoPlayer extends Component {
                             </tr>
                         </tbody>
                     </table>
-                </section>
-                <section>
                     <button onClick={() => this.setState({ showState: !showState })}>{showState ? 'Hide ' : 'Show '}Component State</button>
                     {showState &&
                         <table>
@@ -289,13 +284,6 @@ export default class VideoPlayer extends Component {
                         </table>
                     }
                 </section>
-                <footer className='footer'>
-                    Version <strong>{version}</strong>
-                    {SEPARATOR}
-                    <a href='https://github.com/CookPete/react-player'>GitHub</a>
-                    {SEPARATOR}
-                    <a href='https://www.npmjs.com/package/react-player'>npm</a>
-                </footer>
             </div>
         )
     }
