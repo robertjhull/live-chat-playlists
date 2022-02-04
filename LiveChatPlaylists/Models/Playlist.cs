@@ -9,20 +9,22 @@ namespace LiveChatPlaylists
     {
         public string Name { get; set; }
         public List<string> Keywords { get; set; }
-        private List<string> _videoIDs { get; set; }
+
+        public List<Video> Videos { get; set; }
         public Playlist(string name, List<string> keywords)
         {
             Name = name;
             Keywords = keywords;
-        }
-        public void AddVideosToPlaylist(List<string> videoIDs)
-        {
-            _videoIDs.Concat(videoIDs);
+            Videos = new List<Video>();
         }
 
-        public void ResetVideosInPlaylist(List<string> videoIDs)
+        /// <summary>
+        /// Concatenates a list of videos to the existing list.
+        /// </summary>
+        /// <param name="videos">A <c>List<T></c> of <c>Video</c> objects.</param>
+        public void AddVideos(List<Video> videos)
         {
-            _videoIDs = videoIDs;
+            Videos.Concat(videos);
         }
     }
 }

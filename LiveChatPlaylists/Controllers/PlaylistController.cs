@@ -1,83 +1,78 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
+using System.Threading.Tasks;
 
-namespace LiveChatPlaylists.Controllers
+namespace LiveChatPlaylists
 {
-    public class PlaylistController : Controller
+    public class PlaylistController
     {
-        // GET: PlaylistController
-        public ActionResult Index()
+        private YTLoader _loader;
+        private Dictionary<string, Playlist> _playlists;
+
+        public PlaylistController()
         {
-            return View();
+            _loader = new YTLoader();
+            _playlists = new Dictionary<string, Playlist>();
         }
 
-        // GET: PlaylistController/Details/5
-        public ActionResult Details(int id)
+        public void AddPlaylist(string name, List<string> keywords)
         {
-            return View();
+            Playlist newPlaylist = new Playlist(name, keywords);
+            _playlists.Add(name, newPlaylist);
         }
 
-        // GET: PlaylistController/Create
-        public ActionResult Create()
+        public void UpdatePlaylist(string name, List<string> newKeywords)
         {
-            return View();
+            if (_playlists.ContainsKey(name))
+            {
+                _playlists[name] = new Playlist(name, newKeywords);
+            }
+            else
+            {
+                Debug.WriteLine($"Error: could not find playlist '{name}'."); // to delete
+            }
         }
 
-        // POST: PlaylistController/Create
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        public void RemovePlaylist(string name)
+        {
+            _playlists.Remove(name);
+        }
+
+        public async Task<bool> RefreshVideos(string playlistName)
+        {
+            if (_playlists.ContainsKey(playlistName))
+            {
+                List<string> keywords = _playlists[playlistName].Keywords;
+                List<Video> videos = await _loader.Search(keywords);
+                _playlists[playlistName].AddVideos(videos);
+                return true;
+            }
+            else
+            {
+                Debug.WriteLine($"Error: could not find playlist '{playlistName}'.");
+                return false;
+            }
+        }
+
+        public async Task<List<Video>> GetPlaylistVideos(string playlistName)
         {
             try
             {
-                return RedirectToAction(nameof(Index));
+                bool success = await RefreshVideos(playlistName);
+                if (success)
+                {
+                    return _playlists[playlistName].Videos;
+                }
+                else return new List<Video>();
             }
-            catch
+            catch (Exception e)
             {
-                return View();
+                Debug.WriteLine(e.Message);
+                throw;
             }
         }
 
-        // GET: PlaylistController/Edit/5
-        public ActionResult Edit(int id)
-        {
-            return View();
-        }
-
-        // POST: PlaylistController/Edit/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
-        // GET: PlaylistController/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
-
-        // POST: PlaylistController/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
     }
 }
