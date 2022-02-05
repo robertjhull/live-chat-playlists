@@ -22,7 +22,7 @@ namespace LiveChatPlaylists
         {
             _quota = 50;
             _prefix = "https://www.youtube.com/embed/";
-            _apiKey = "AIzaSyCd7oXK3SIh5BBCC7-ggo4hvyizMWVgYPo"; // replace with ENV variable
+            _apiKey = "secret api key"; // replace with ENV variable
             _queryLog = new Dictionary<string, QueryLog>();
         }
 
