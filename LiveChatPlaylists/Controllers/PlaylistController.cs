@@ -1,20 +1,54 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.SignalR;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace LiveChatPlaylists
 {
-    public class PlaylistController
+    public interface IPlaylistController
+    {
+        void AddPlaylist(string name, List<string> keywords);
+        Dictionary<string, Playlist> GetPlaylists();
+        void UpdatePlaylist(string name, List<string> newKeywords);
+        void RemovePlaylist(string name);
+        Task<bool> RefreshVideos(string playlistName);
+        Task<List<Video>> GetPlaylistVideos(string playlistName);
+    }
+
+    public class PlaylistController : IPlaylistController
     {
         private YTLoader _loader;
         private Dictionary<string, Playlist> _playlists;
+        private readonly IHubContext<Hubs.ChatHub> _chatHub;
 
-        public PlaylistController()
+        public PlaylistController(IHubContext<Hubs.ChatHub> chatHub)
         {
             _loader = new YTLoader();
             _playlists = new Dictionary<string, Playlist>();
+            _chatHub = chatHub;
+
+            RunInitialSetup();
+        }
+
+        public void RunInitialSetup()
+        {
+            Playlist default_one;
+            Playlist default_two;
+            Playlist default_three;
+
+            default_one = new Playlist("Classic Sports Highlights", new List<string> { "sw561", "highlights" });
+            default_two = new Playlist("Souls", new List<string> { "From Software", "souls", "gameplay", "no commentary" });
+            default_three = new Playlist("Random", new List<string> { "random", "bizarre", "fever dream" });
+
+            _playlists.Add(default_one.Name, default_one);
+            _playlists.Add(default_two.Name, default_two);
+            _playlists.Add(default_three.Name, default_three);
+        }
+
+        public Dictionary<string, Playlist> GetPlaylists()
+        {
+            return _playlists;
         }
 
         public void AddPlaylist(string name, List<string> keywords)
@@ -44,8 +78,11 @@ namespace LiveChatPlaylists
         {
             if (_playlists.ContainsKey(playlistName))
             {
-                List<string> keywords = _playlists[playlistName].Keywords;
-                List<Video> videos = await _loader.Search(keywords);
+                List<string> keywords;
+                List<Video> videos;
+
+                keywords = _playlists[playlistName].Keywords;
+                videos = await _loader.Search(keywords);
                 _playlists[playlistName].AddVideos(videos);
                 return true;
             }

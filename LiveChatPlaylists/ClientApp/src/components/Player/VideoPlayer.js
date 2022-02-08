@@ -7,7 +7,7 @@ import ReactPlayer from 'react-player/youtube'
 import Duration from './Duration'
 
 const videoUrlQueue = [
-    "https://www.youtube.com/watch?v=2lTQEYLAnmM",
+    "https://www.youtube.com/embed/2qVvwcCHvhI",
     "https://www.youtube.com/watch?v=xpgZu36qJTE",
     "https://www.youtube.com/watch?v=T7FjVSoLOSo",
     "https://www.youtube.com/watch?v=Cgv3X5wOH-c",
@@ -63,10 +63,6 @@ export default class VideoPlayer extends Component {
 
     handleSetPlaybackRate = e => {
         this.setState({ playbackRate: parseFloat(e.target.value) })
-    }
-
-    handleOnPlaybackRateChange = (speed) => {
-        this.setState({ playbackRate: parseFloat(speed) })
     }
 
     handleTogglePIP = () => {
@@ -140,7 +136,6 @@ export default class VideoPlayer extends Component {
 
     render() {
         const { queueIdx, url, playing, controls, light, volume, muted, loop, played, loaded, duration, playbackRate, pip, showState } = this.state
-        const SEPARATOR = ' � '
 
         return (
             <div className='vplayer'>
@@ -167,7 +162,6 @@ export default class VideoPlayer extends Component {
                             onDisablePIP={this.handleDisablePIP}
                             onPause={this.handlePause}
                             onBuffer={() => console.log('onBuffer')}
-                            onPlaybackRateChange={this.handleOnPlaybackRateChange}
                             onSeek={e => console.log('onSeek', e)}
                             onEnded={this.handleEnded}
                             onError={e => console.log('onError', e)}

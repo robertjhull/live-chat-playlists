@@ -1,23 +1,15 @@
 import React, { useEffect, useRef } from 'react';
 
 const NewMessage = ({ msg, idx }) => {
-    const botStyle = {
-        color: 'grey',
+    const messageStyle = {
+        color: `#${msg.color}`,
         fontWeight: 'bold',
         fontSize: '16px'
     }
-
-    const userStyle = {
-        color: 'blue',
-        fontWeight: 'bold',
-        fontSize: '16px'
-    }
-
-    const isBot = msg.user === 'Bot';
 
     return (
         <li key={idx} className="new-message">{msg.message}
-            <span style={isBot ? botStyle : userStyle}>
+            <span style={messageStyle}>
                 {' < ' + msg.user}
             </span>
         </li>

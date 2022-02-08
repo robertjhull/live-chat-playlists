@@ -10,11 +10,13 @@ namespace LiveChatPlaylists.Hubs
     {
         private readonly string _botUser;
         private readonly IDictionary<string, UserConnection> _connections;
+        private readonly IPlaylistController _playlistController;
 
-        public ChatHub(IDictionary<string, UserConnection> connections)
+        public ChatHub(IDictionary<string, UserConnection> connections, IPlaylistController playlistController)
         {
             _botUser = "Bot";
             _connections = connections;
+            _playlistController = playlistController;
         }
 
         public async Task<UserConnection> JoinRoom(UserConnection userConnection)
@@ -25,7 +27,6 @@ namespace LiveChatPlaylists.Hubs
                 $"{userConnection.User} has joined {userConnection.Room}");
 
             await SendConnectedUsers(userConnection.Room);
-            System.Diagnostics.Debug.WriteLine($"{userConnection.User} has joined {userConnection.Room}"); // to delete
             return userConnection;
         }
 
@@ -63,7 +64,7 @@ namespace LiveChatPlaylists.Hubs
 
         public Task GetConnectedRooms()
         {
-            var rooms = _connections.Values.Select(c => c.Room).Distinct().ToList();
+            var rooms = _playlistController.GetPlaylists();
             return Clients.All.SendAsync("RoomsOpen", rooms);
         }
 
@@ -73,6 +74,12 @@ namespace LiveChatPlaylists.Hubs
                 .Where(c => c.Room == room)
                 .Select(c => c.User);
             return Clients.Group(room).SendAsync("UsersInRoom", users);
+        }
+
+        public async Task GetNewVideos(string room)
+        {
+            List<Video> videos = await _playlistController.GetPlaylistVideos(room);
+            await Clients.Group(room).SendAsync("RecieveVideos", videos);
         }
     }
 }

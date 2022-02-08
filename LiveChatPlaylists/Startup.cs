@@ -40,6 +40,8 @@ namespace LiveChatPlaylists
 
             services.AddSingleton<IDictionary<string, UserConnection>>(opts => new Dictionary<string, UserConnection>());
 
+            services.AddSingleton<IPlaylistController, PlaylistController>();
+
             // In production, the React files will be served from this directory
             services.AddSpaStaticFiles(configuration =>
             {

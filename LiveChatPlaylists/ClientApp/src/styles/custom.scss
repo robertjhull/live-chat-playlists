@@ -121,3 +121,18 @@ button:active {
 .new-message {
     margin-bottom: 10px;
 }
+
+.tag {
+    color:#606875;
+    margin: 0 10px;
+    font-style: italic;
+}
+
+.row-btn:hover {
+    cursor: pointer;
+    background-color: #606875;
+}
+
+.selected {
+    background-color: #606875;
+}
