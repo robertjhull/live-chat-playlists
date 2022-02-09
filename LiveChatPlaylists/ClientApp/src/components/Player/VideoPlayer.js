@@ -6,20 +6,9 @@ import '../../styles/VideoPlayer.css'
 import ReactPlayer from 'react-player/youtube'
 import Duration from './Duration'
 
-const videoUrlQueue = [
-    "https://www.youtube.com/embed/2qVvwcCHvhI",
-    "https://www.youtube.com/watch?v=xpgZu36qJTE",
-    "https://www.youtube.com/watch?v=T7FjVSoLOSo",
-    "https://www.youtube.com/watch?v=Cgv3X5wOH-c",
-    "https://www.youtube.com/watch?v=WfjjJF-kCOE",
-    "https://www.youtube.com/watch?v=Whr6y-lllv0"
-] // for testing
-
 export default class VideoPlayer extends Component {
     state = {
-        queueIdx: 0,
         url: null,
-        pip: false,
         playing: true,
         controls: false,
         light: false,
@@ -42,51 +31,21 @@ export default class VideoPlayer extends Component {
         })
     }
 
-    componentDidMount = () => {
-        this.setState({
-            url: videoUrlQueue[this.state.queueIdx],
-            queueIdx: this.state.queueIdx + 1
-        })
+    componentDidMount() {
+        if (!this.state.url) {
+            this.props.getNextVideo()
+                .then(() => {
+                    this.load(this.props.video.url)
+                });
+        }
     }
 
-    handlePlayPause = () => {
-        this.setState({ playing: !this.state.playing })
-    }
-
-    handleStop = () => {
-        this.setState({ url: null, playing: false })
+    handleMute = () => {
+        this.setState({ muted: !this.state.muted })
     }
 
     handleVolumeChange = e => {
         this.setState({ volume: parseFloat(e.target.value) })
-    }
-
-    handleSetPlaybackRate = e => {
-        this.setState({ playbackRate: parseFloat(e.target.value) })
-    }
-
-    handleTogglePIP = () => {
-        this.setState({ pip: !this.state.pip })
-    }
-
-    handlePlay = () => {
-        console.log('onPlay')
-        this.setState({ playing: true })
-    }
-
-    handleEnablePIP = () => {
-        console.log('onEnablePIP')
-        this.setState({ pip: true })
-    }
-
-    handleDisablePIP = () => {
-        console.log('onDisablePIP')
-        this.setState({ pip: false })
-    }
-
-    handlePause = () => {
-        console.log('onPause')
-        this.setState({ playing: false })
     }
 
     handleSeekMouseDown = e => {
@@ -111,10 +70,8 @@ export default class VideoPlayer extends Component {
     }
 
     handleEnded = () => {
-        if (this.state.queueIdx < videoUrlQueue.length) {
-            this.setState({ url: videoUrlQueue[this.state.queueIdx], queueIdx: this.state.queueIdx + 1 })
-        }
-        else console.log('end of playlist')
+        this.props.getNextVideo();
+        this.setState({ url: null });
     }
 
     handleDuration = (duration) => {
@@ -135,7 +92,7 @@ export default class VideoPlayer extends Component {
     }
 
     render() {
-        const { queueIdx, url, playing, controls, light, volume, muted, loop, played, loaded, duration, playbackRate, pip, showState } = this.state
+        const { url, playing, controls, light, volume, muted, loop, played, loaded, duration, playbackRate, showState } = this.state
 
         return (
             <div className='vplayer'>
@@ -147,7 +104,6 @@ export default class VideoPlayer extends Component {
                             width='800px'
                             height='480px'
                             url={url}
-                            pip={pip}
                             playing={playing}
                             controls={controls}
                             light={light}
@@ -158,8 +114,6 @@ export default class VideoPlayer extends Component {
                             onReady={() => console.log('onReady')}
                             onStart={() => console.log('onStart')}
                             onPlay={this.handlePlay}
-                            onEnablePIP={this.handleEnablePIP}
-                            onDisablePIP={this.handleDisablePIP}
                             onPause={this.handlePause}
                             onBuffer={() => console.log('onBuffer')}
                             onSeek={e => console.log('onSeek', e)}
@@ -177,19 +131,9 @@ export default class VideoPlayer extends Component {
                             <tr>
                                 <th>Controls</th>
                                 <td>
-                                    <button onClick={this.handleStop}>Stop</button>
-                                    <button onClick={this.handlePlayPause}>{playing ? 'Pause' : 'Play'}</button>
+                                    <button onClick={this.handleMute}>{muted ? 'Unmute' : 'Mute'}</button>
                                     <button onClick={this.handleClickFullscreen}>Fullscreen</button>
-                                    {ReactPlayer.canEnablePIP(url) &&
-                                        <button onClick={this.handleTogglePIP}>{pip ? 'Disable PiP' : 'Enable PiP'}</button>}
-                                </td>
-                            </tr>
-                            <tr>
-                                <th>Speed</th>
-                                <td>
-                                    <button onClick={this.handleSetPlaybackRate} value={1}>1x</button>
-                                    <button onClick={this.handleSetPlaybackRate} value={1.5}>1.5x</button>
-                                    <button onClick={this.handleSetPlaybackRate} value={2}>2x</button>
+                                    <button onClick={this.handleEnded}>Skip</button>
                                 </td>
                             </tr>
                             {/* <tr>
@@ -214,24 +158,15 @@ export default class VideoPlayer extends Component {
                                     <input type='range' min={0} max={1} step='any' value={volume} onChange={this.handleVolumeChange} />
                                 </td>
                             </tr>
-
-                            <tr>
-                                <th>Custom URL</th>
-                                <td>
-                                    <input ref={input => { this.urlInput = input }} type='text' placeholder='Enter URL' />
-                                    <button onClick={() => this.setState({ url: this.urlInput.value })}>Load</button>
-                                </td>
-                            </tr>
                         </tbody>
                     </table>
+                    
+                    
                     <button onClick={() => this.setState({ showState: !showState })}>{showState ? 'Hide ' : 'Show '}Component State</button>
+                    
                     {showState &&
                         <table>
                             <tbody>
-                                <tr>
-                                    <th>queueIdx</th>
-                                    <td>{queueIdx}</td>
-                                </tr>
                                 <tr>
                                     <th>url</th>
                                     <td className={!url ? 'faded' : ''}>

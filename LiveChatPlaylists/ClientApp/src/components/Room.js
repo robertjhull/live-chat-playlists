@@ -3,12 +3,15 @@ import { Col, Container, Row } from 'reactstrap';
 import ChatContainer from './Chat/ChatContainer';
 import VideoPlayer from './Player/VideoPlayer';
 
-const Room = ({messages, sendMessage}) => {
+const Room = ({ video, getNextVideo, messages, sendMessage, closeConnection }) => {
     return (
         <Container>
             <Row>
                 <Col xs="9">
-                    <VideoPlayer />
+                    <VideoPlayer
+                        video={video}
+                        getNextVideo={getNextVideo}
+                    />
                 </Col>
                 <Col xs="3">
                     <ChatContainer

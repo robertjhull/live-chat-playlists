@@ -13,6 +13,10 @@ export const Home = () => {
     const [users, setUsers] = useState([]);
     const [rooms, setRooms] = useState([]);
     const [messages, setMessages] = useState([]);
+    const [video, setVideo] = useState({
+        title: '',
+        url: ''
+    })
 
     const joinRoom = async (user, room) => {
         try {
@@ -21,7 +25,14 @@ export const Home = () => {
                     setLoggedIn({ user: res.user, color: res.color.name })
                 })
                 .catch(err => console.log(err));
+        } catch (e) {
+            console.log(e)
+        }
+    }
 
+    const getNextVideo = async () => {
+        try {
+            await connection.invoke("GetNewVideo");
         } catch (e) {
             console.log(e)
         }
@@ -62,6 +73,10 @@ export const Home = () => {
                 connection.on("ReceiveMessage", (user, color, message) => {
                     setMessages(messages => [...messages, {user, color, message}])
                 })
+
+                connection.on("ReceiveVideo", (video) => {
+                    setVideo({ title: video.title, url: video.url });
+                })
     
                 connection.onclose(e => {
                     setConnection();
@@ -80,11 +95,15 @@ export const Home = () => {
         getRooms();
     }, [])
 
+    console.log(video);
+
     return (
         <Container>
             {
                 loggedIn.user ? (
                     <Room
+                        video={video}
+                        getNextVideo={getNextVideo}
                         messages={messages}
                         sendMessage={sendMessage}
                         closeConnection={closeConnection}
